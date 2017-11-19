@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using FriendOrganizer.DataAccess;
 using FriendOrganizer.UI.Data;
 using FriendOrganizer.UI.ViewModel;
 
@@ -12,6 +13,7 @@ namespace FriendOrganizer.UI.Startup
         public IContainer Bootstrap()
         {
             var builder = new ContainerBuilder();
+            builder.RegisterType<FriendOrganizerDbContext>().AsSelf();
             builder.RegisterType<MainWindow>().AsSelf();
             builder.RegisterType<MainViewModel>().AsSelf();
             // Container knows when IFriendDataService is required somewhere; it creates instance of FriendDataService class then.
