@@ -1,22 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using FriendOrganizer.Model;
 using FriendOrganizer.UI.Data;
+using FriendOrganizer.UI.Event;
+using Prism.Events;
 
 namespace FriendOrganizer.UI.ViewModel
 {
+    /// <summary>
+    ///     Displays details of selected friend.
+    /// </summary>
     public class FriendDetailViewModel : ViewModelBase, IFriendDetailViewModel
     {
-        public IFriendDataService dataService;
-
-        private Friend friend;
-
         public Friend Friend
         {
-            get { return friend; }
+            get => friend;
             private set
             {
                 friend = value;
@@ -24,14 +21,26 @@ namespace FriendOrganizer.UI.ViewModel
             }
         }
 
-        public FriendDetailViewModel(IFriendDataService dataService)
+        public IFriendDataService dataService;
+        public IEventAggregator eventAggregator;
+
+        private Friend friend;
+
+        public FriendDetailViewModel(IFriendDataService dataService, IEventAggregator eventAggregator)
         {
             this.dataService = dataService;
+            this.eventAggregator = eventAggregator;
+            this.eventAggregator.GetEvent<OpenFriendDetailViewEvent>().Subscribe(OnOpenFriendDetailView);
         }
 
         public async Task LoadAsync(int id)
         {
             Friend = await dataService.GetByIdAsync(id);
+        }
+
+        private async void OnOpenFriendDetailView(int id)
+        {
+            await LoadAsync(id);
         }
     }
 }

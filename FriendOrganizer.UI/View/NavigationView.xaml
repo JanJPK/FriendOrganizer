@@ -9,6 +9,7 @@
     <Grid>
         <!-- DisplayMemberPath="FirstName" - displays chosen property when control is bound to a complex object. -->
         <ListView ItemsSource="{Binding Friends}"
+                  SelectedItem="{Binding SelectedFriend, Mode=TwoWay}"
                   DisplayMemberPath="DisplayMember" />
     </Grid>
 </UserControl>
