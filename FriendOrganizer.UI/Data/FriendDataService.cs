@@ -20,16 +20,25 @@ namespace FriendOrganizer.UI.Data
             this.contextCreator = contextCreator;
         }
 
-        public async Task<List<Friend>> GetAllAsync()
+        //public async Task<List<Friend>> GetAllAsync()
+        //{
+        //    // yield return creates element only when need for it arises.
+        //    //yield return new Friend {FirstName = "Greg", LastName = "Green"};
+        //    //yield return new Friend {FirstName = "Paul", LastName = "Purple"};
+        //    //yield return new Friend {FirstName = "Bob", LastName = "Blue"};
+
+        //    using (var context = contextCreator())
+        //    {
+        //        return await context.Friends.AsNoTracking().ToListAsync();
+        //    }
+        //}
+
+        public async Task<Friend> GetByIdAsync(int id)
         {
-            // yield return creates element only when need for it arises.
-            //yield return new Friend {FirstName = "Greg", LastName = "Green"};
-            //yield return new Friend {FirstName = "Paul", LastName = "Purple"};
-            //yield return new Friend {FirstName = "Bob", LastName = "Blue"};
 
             using (var context = contextCreator())
             {
-                return await context.Friends.AsNoTracking().ToListAsync();
+                return await context.Friends.AsNoTracking().SingleAsync(f => f.Id == id);
             }
         }
     }

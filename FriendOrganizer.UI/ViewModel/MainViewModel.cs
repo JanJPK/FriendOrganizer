@@ -1,43 +1,22 @@
-﻿using System.Collections.ObjectModel;
-using System.Threading.Tasks;
-using FriendOrganizer.Model;
-using FriendOrganizer.UI.Data;
+﻿using System.Threading.Tasks;
 
 namespace FriendOrganizer.UI.ViewModel
 {
     public class MainViewModel : ViewModelBase
     {
-        public ObservableCollection<Friend> Friends { get; set; }
+        public INavigationViewModel NavigationViewModel { get; }
+        public IFriendDetailViewModel FriendDetailViewModel { get; private set; }
 
-        public Friend SelectedFriend
+        public MainViewModel(INavigationViewModel navigationViewModel, 
+            IFriendDetailViewModel friendDetailViewModel)
         {
-            get => selectedFriend;
-            set
-            {
-                selectedFriend = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private readonly IFriendDataService friendDataService;
-
-        private Friend selectedFriend;
-
-
-        public MainViewModel(IFriendDataService friendDataService)
-        {
-            Friends = new ObservableCollection<Friend>();
-            this.friendDataService = friendDataService;
+            NavigationViewModel = navigationViewModel;
+            FriendDetailViewModel = friendDetailViewModel;
         }
 
         public async Task LoadAsync()
         {
-            var friends = await friendDataService.GetAllAsync();
-            Friends.Clear();
-            foreach (var friend in friends)
-            {
-                Friends.Add(friend);
-            }
+            await NavigationViewModel.LoadAsync();
         }
     }
 }

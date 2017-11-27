@@ -16,9 +16,12 @@ namespace FriendOrganizer.UI.Startup
             builder.RegisterType<FriendOrganizerDbContext>().AsSelf();
             builder.RegisterType<MainWindow>().AsSelf();
             builder.RegisterType<MainViewModel>().AsSelf();
-            // Container knows when IFriendDataService is required somewhere; it creates instance of FriendDataService class then.
+            // Container knows when IFriendDataService is required somewhere; it creates instance of FriendDataService class then
             builder.RegisterType<FriendDataService>().As<IFriendDataService>();
-
+            //builder.RegisterType<LookupDataService>().As<IFriendLookupDataService>();
+            builder.RegisterType<LookupDataService>().AsImplementedInterfaces();
+            builder.RegisterType<NavigationViewModel>().As<INavigationViewModel>();
+            builder.RegisterType<FriendDetailViewModel>().As<IFriendDetailViewModel>();
             return builder.Build();
         }
     }
