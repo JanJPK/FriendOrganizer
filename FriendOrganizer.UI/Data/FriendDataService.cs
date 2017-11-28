@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Entity;
-using System.Linq;
 using System.Threading.Tasks;
 using FriendOrganizer.DataAccess;
 using FriendOrganizer.Model;
@@ -9,16 +7,26 @@ using FriendOrganizer.Model;
 namespace FriendOrganizer.UI.Data
 {
     /// <summary>
-    ///     Supplies data; "fake" database.
+    ///     Supplies data; "fake" database (later changed).
     /// </summary>
     public class FriendDataService : IFriendDataService
     {
-        private Func<FriendOrganizerDbContext> contextCreator;
+        #region Fields
+
+        private readonly Func<FriendOrganizerDbContext> contextCreator;
+
+        #endregion
+
+        #region Constructors and Destructors
 
         public FriendDataService(Func<FriendOrganizerDbContext> contextCreator)
         {
             this.contextCreator = contextCreator;
         }
+
+        #endregion
+
+        #region Public Methods and Operators
 
         //public async Task<List<Friend>> GetAllAsync()
         //{
@@ -35,11 +43,22 @@ namespace FriendOrganizer.UI.Data
 
         public async Task<Friend> GetByIdAsync(int id)
         {
-
             using (var context = contextCreator())
             {
                 return await context.Friends.AsNoTracking().SingleAsync(f => f.Id == id);
             }
         }
+
+        public async Task SaveAsync(Friend friend)
+        {
+            using (var ctx = contextCreator())
+            {
+                ctx.Friends.Attach(friend);
+                ctx.Entry(friend).State = EntityState.Modified;
+                await ctx.SaveChangesAsync();
+            }
+        }
+
+        #endregion
     }
 }

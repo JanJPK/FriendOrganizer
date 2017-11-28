@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using FriendOrganizer.Model;
 using FriendOrganizer.UI.Data;
@@ -12,10 +13,33 @@ namespace FriendOrganizer.UI.ViewModel
     /// </summary>
     public class NavigationViewModel : ViewModelBase, INavigationViewModel
     {
-        // This will be bound to the UI to display the friends.
-        public ObservableCollection<LookupItem> Friends { get; }
+        #region Fields
 
-        public LookupItem SelectedFriend
+        private readonly IFriendLookupDataService _friendLookupService;
+        private readonly IEventAggregator eventAggregator;
+
+        private NavigationItemViewModel selectedFriend;
+
+        #endregion
+
+        #region Constructors and Destructors
+
+        public NavigationViewModel(IFriendLookupDataService friendLookupService, IEventAggregator eventAggregator)
+        {
+            _friendLookupService = friendLookupService;
+            this.eventAggregator = eventAggregator;
+            Friends = new ObservableCollection<NavigationItemViewModel>();
+            eventAggregator.GetEvent<AfterFriendSavedEvent>().Subscribe(AfterFriendSaved);
+        }
+
+        #endregion
+
+        #region Public Properties
+
+        // This will be bound to the UI to display the friends.
+        public ObservableCollection<NavigationItemViewModel> Friends { get; }
+
+        public NavigationItemViewModel SelectedFriend
         {
             get => selectedFriend;
             set
@@ -29,17 +53,9 @@ namespace FriendOrganizer.UI.ViewModel
             }
         }
 
-        private readonly IFriendLookupDataService _friendLookupService;
-        private readonly IEventAggregator eventAggregator;
+        #endregion
 
-        private LookupItem selectedFriend;
-
-        public NavigationViewModel(IFriendLookupDataService friendLookupService, IEventAggregator eventAggregator)
-        {
-            _friendLookupService = friendLookupService;
-            this.eventAggregator = eventAggregator;
-            Friends = new ObservableCollection<LookupItem>();
-        }
+        #region Public Methods and Operators
 
         public async Task LoadAsync()
         {
@@ -47,8 +63,20 @@ namespace FriendOrganizer.UI.ViewModel
             Friends.Clear();
             foreach (var item in lookup)
             {
-                Friends.Add(item);
+                Friends.Add(new NavigationItemViewModel(item.Id, item.DisplayMember));
             }
         }
+
+        #endregion
+
+        #region Methods
+
+        private void AfterFriendSaved(AfterFriendSavedEventArgs obj)
+        {
+            var lookupItem = Friends.Single(l => l.Id == obj.Id);
+            lookupItem.DisplayMember = obj.DisplayMember;
+        }
+
+        #endregion
     }
 }
