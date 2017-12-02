@@ -8,9 +8,11 @@ namespace FriendOrganizer.UI.Event
 
     public class AfterFriendSavedEventArgs
     {
-        public int Id { get; set; }
+        #region Public Properties
+
         public string DisplayMember { get; set; }
-        
-        
+        public int Id { get; set; }
+
+        #endregion
     }
 }

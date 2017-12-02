@@ -8,6 +8,9 @@ using FriendOrganizer.Model;
 
 namespace FriendOrganizer.UI.Data
 {
+    /// <summary>
+    ///     Loads the data from database.
+    /// </summary>
     public class LookupDataService : IFriendLookupDataService
     {
         private readonly Func<FriendOrganizerDbContext> contextCreator;

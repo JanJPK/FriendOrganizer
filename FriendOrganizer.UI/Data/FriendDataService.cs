@@ -7,7 +7,7 @@ using FriendOrganizer.Model;
 namespace FriendOrganizer.UI.Data
 {
     /// <summary>
-    ///     Supplies data; "fake" database (later changed).
+    ///     Loads the data from database.
     /// </summary>
     public class FriendDataService : IFriendDataService
     {

@@ -2,9 +2,7 @@
 using System.Windows;
 using System.Windows.Threading;
 using Autofac;
-using FriendOrganizer.UI.Data;
 using FriendOrganizer.UI.Startup;
-using FriendOrganizer.UI.ViewModel;
 
 namespace FriendOrganizer.UI
 {
@@ -13,6 +11,15 @@ namespace FriendOrganizer.UI
     /// </summary>
     public partial class App : Application
     {
+        #region Methods
+
+        private void App_OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        {
+            MessageBox.Show("Unexpected error occured." + Environment.NewLine + e.Exception.Message,
+                "Unexpected Error");
+            e.Handled = true;
+        }
+
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             // Whenever you change the constructor of a class, you have to change this line:
@@ -26,11 +33,6 @@ namespace FriendOrganizer.UI
             mainWindow.Show();
         }
 
-        private void App_OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
-        {
-            MessageBox.Show("Unexpected error occured." + Environment.NewLine + e.Exception.Message,
-                "Unexpected Error");
-            e.Handled = true;
-        }
+        #endregion
     }
 }
