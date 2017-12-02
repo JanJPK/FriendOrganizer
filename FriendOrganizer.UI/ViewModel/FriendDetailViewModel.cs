@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 using System.Windows.Input;
-using FriendOrganizer.Model;
 using FriendOrganizer.UI.Data;
 using FriendOrganizer.UI.Event;
+using FriendOrganizer.UI.Wrapper;
 using Prism.Commands;
 using Prism.Events;
 
@@ -18,7 +18,7 @@ namespace FriendOrganizer.UI.ViewModel
         public IFriendDataService dataService;
         public IEventAggregator eventAggregator;
 
-        private Friend friend;
+        private FriendWrapper friend;
 
         #endregion
 
@@ -36,7 +36,7 @@ namespace FriendOrganizer.UI.ViewModel
 
         #region Public Properties
 
-        public Friend Friend
+        public FriendWrapper Friend
         {
             get => friend;
             private set
@@ -54,7 +54,15 @@ namespace FriendOrganizer.UI.ViewModel
 
         public async Task LoadAsync(int id)
         {
-            Friend = await dataService.GetByIdAsync(id);
+            var friend = await dataService.GetByIdAsync(id);
+            Friend = new FriendWrapper(friend);
+            Friend.PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == nameof(Friend.HasErrors))
+                {
+                    ((DelegateCommand)SaveCommand).RaiseCanExecuteChanged();
+                }
+            };
         }
 
         #endregion
@@ -68,12 +76,12 @@ namespace FriendOrganizer.UI.ViewModel
 
         private bool OnSaveCanExecute()
         {
-            return true;
+            return Friend != null && !Friend.HasErrors;
         }
 
         private async void OnSaveExecute()
         {
-            await dataService.SaveAsync(Friend);
+            await dataService.SaveAsync(Friend.Model);
             eventAggregator.GetEvent<AfterFriendSavedEvent>().Publish(
                 new AfterFriendSavedEventArgs
                 {

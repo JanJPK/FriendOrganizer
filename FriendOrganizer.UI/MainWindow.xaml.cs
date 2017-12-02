@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System.Globalization;
+using System.Threading;
+using System.Windows;
 using FriendOrganizer.UI.ViewModel;
 
 namespace FriendOrganizer.UI
@@ -13,6 +15,7 @@ namespace FriendOrganizer.UI
         // Taking parameter -> changes required in App.xaml.
         public MainWindow(MainViewModel viewModel)
         {
+            Thread.CurrentThread.CurrentUICulture = new CultureInfo("en-us");
             InitializeComponent();
             this.viewModel = viewModel;
             DataContext = this.viewModel;

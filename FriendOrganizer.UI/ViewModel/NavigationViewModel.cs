@@ -15,7 +15,7 @@ namespace FriendOrganizer.UI.ViewModel
     {
         #region Fields
 
-        private readonly IFriendLookupDataService _friendLookupService;
+        private readonly IFriendLookupDataService friendLookupService;
         private readonly IEventAggregator eventAggregator;
 
         private NavigationItemViewModel selectedFriend;
@@ -26,7 +26,7 @@ namespace FriendOrganizer.UI.ViewModel
 
         public NavigationViewModel(IFriendLookupDataService friendLookupService, IEventAggregator eventAggregator)
         {
-            _friendLookupService = friendLookupService;
+            this.friendLookupService = friendLookupService;
             this.eventAggregator = eventAggregator;
             Friends = new ObservableCollection<NavigationItemViewModel>();
             eventAggregator.GetEvent<AfterFriendSavedEvent>().Subscribe(AfterFriendSaved);
@@ -59,7 +59,7 @@ namespace FriendOrganizer.UI.ViewModel
 
         public async Task LoadAsync()
         {
-            var lookup = await _friendLookupService.GetFriendLookupAsync();
+            var lookup = await friendLookupService.GetFriendLookupAsync();
             Friends.Clear();
             foreach (var item in lookup)
             {
