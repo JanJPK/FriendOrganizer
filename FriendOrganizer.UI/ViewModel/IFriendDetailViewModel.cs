@@ -12,7 +12,7 @@ namespace FriendOrganizer.UI.ViewModel
 
         #region Public Methods and Operators
 
-        Task LoadAsync(int id);
+        Task LoadAsync(int? id);
 
         #endregion
     }

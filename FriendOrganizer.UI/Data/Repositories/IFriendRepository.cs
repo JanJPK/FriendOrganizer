@@ -12,5 +12,8 @@ namespace FriendOrganizer.UI.Data.Repositories
         Task SaveAsync();
 
         #endregion
+
+        void Add(Friend friend);
+        void Remove(Friend friendModel);
     }
 }

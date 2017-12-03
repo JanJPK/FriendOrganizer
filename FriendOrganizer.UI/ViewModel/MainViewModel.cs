@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using FriendOrganizer.UI.Event;
 using FriendOrganizer.UI.View.Services;
+using Prism.Commands;
 using Prism.Events;
 
 namespace FriendOrganizer.UI.ViewModel
@@ -11,9 +13,9 @@ namespace FriendOrganizer.UI.ViewModel
         #region Fields
 
         private readonly IEventAggregator eventAggregator;
-        private IFriendDetailViewModel friendDetailViewModel;
         private readonly Func<IFriendDetailViewModel> friendDetailViewModelCreator;
         private readonly IMessageDialogService messageDialogService;
+        private IFriendDetailViewModel friendDetailViewModel;
 
         #endregion
 
@@ -28,13 +30,17 @@ namespace FriendOrganizer.UI.ViewModel
             this.friendDetailViewModelCreator = friendDetailViewModelCreator;
             this.eventAggregator = eventAggregator;
             this.eventAggregator.GetEvent<OpenFriendDetailViewEvent>().Subscribe(OnOpenFriendDetailView);
-
+            this.eventAggregator.GetEvent<AfterFriendDeletedEvent>().Subscribe(AfterFriendDeleted);
+            CreateNewFriendCommand = new DelegateCommand(OnCreateNewFriendExecute);
             NavigationViewModel = navigationViewModel;
         }
+
 
         #endregion
 
         #region Public Properties
+
+        public ICommand CreateNewFriendCommand { get; }
 
         public IFriendDetailViewModel FriendDetailViewModel
         {
@@ -61,7 +67,12 @@ namespace FriendOrganizer.UI.ViewModel
 
         #region Methods
 
-        private async void OnOpenFriendDetailView(int id)
+        private void OnCreateNewFriendExecute()
+        {
+            OnOpenFriendDetailView(null);
+        }
+
+        private async void OnOpenFriendDetailView(int? id)
         {
             if (FriendDetailViewModel != null && FriendDetailViewModel.HasChanges)
             {
@@ -81,5 +92,10 @@ namespace FriendOrganizer.UI.ViewModel
         }
 
         #endregion
+        private void AfterFriendDeleted(int id)
+        {
+            FriendDetailViewModel = null;
+
+        }
     }
 }

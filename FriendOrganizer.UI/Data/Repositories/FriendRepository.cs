@@ -55,6 +55,16 @@ namespace FriendOrganizer.UI.Data.Repositories
             await context.SaveChangesAsync();
         }
 
+        public void Add(Friend friend)
+        {
+            context.Friends.Add(friend);
+        }
+
+        public void Remove(Friend friendModel)
+        {
+            context.Friends.Remove(friendModel);
+        }
+
         #endregion
     }
 }
