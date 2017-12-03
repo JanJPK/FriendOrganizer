@@ -40,25 +40,6 @@ namespace FriendOrganizer.UI.Wrapper
             return null;
         }
 
-        private void ValidatePropertyInternal(string propertyName, object currentValue)
-        {
-            ClearErrors(propertyName);
-            ValidateDataAnnotations(propertyName, currentValue);
-            ValidateCustomErrors(propertyName);
-        }
-
-        private void ValidateDataAnnotations(string propertyName, object currentValue)
-        {
-            var results = new List<ValidationResult>();
-            var context = new ValidationContext(Model) { MemberName = propertyName };
-            Validator.TryValidateProperty(currentValue, context, results);
-
-            foreach (var result in results)
-            {
-                AddError(propertyName, result.ErrorMessage);
-            }
-        }
-
         private void ValidateCustomErrors(string propertyName)
         {
             var errors = ValidateProperty(propertyName);
@@ -71,8 +52,25 @@ namespace FriendOrganizer.UI.Wrapper
             }
         }
 
+        private void ValidateDataAnnotations(string propertyName, object currentValue)
+        {
+            var results = new List<ValidationResult>();
+            var context = new ValidationContext(Model) {MemberName = propertyName};
+            Validator.TryValidateProperty(currentValue, context, results);
+
+            foreach (var result in results)
+            {
+                AddError(propertyName, result.ErrorMessage);
+            }
+        }
+
+        private void ValidatePropertyInternal(string propertyName, object currentValue)
+        {
+            ClearErrors(propertyName);
+            ValidateDataAnnotations(propertyName, currentValue);
+            ValidateCustomErrors(propertyName);
+        }
+
         #endregion
-
-
     }
 }

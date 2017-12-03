@@ -1,6 +1,8 @@
 ﻿using Autofac;
 using FriendOrganizer.DataAccess;
-using FriendOrganizer.UI.Data;
+using FriendOrganizer.UI.Data.Lookups;
+using FriendOrganizer.UI.Data.Repositories;
+using FriendOrganizer.UI.View.Services;
 using FriendOrganizer.UI.ViewModel;
 using Prism.Events;
 
@@ -11,6 +13,8 @@ namespace FriendOrganizer.UI.Startup
     /// </summary>
     public class Bootstrapper
     {
+        #region Public Methods and Operators
+
         public IContainer Bootstrap()
         {
             var builder = new ContainerBuilder();
@@ -21,13 +25,16 @@ namespace FriendOrganizer.UI.Startup
             builder.RegisterType<MainWindow>().AsSelf();
             builder.RegisterType<MainViewModel>().AsSelf();
 
-            // Container knows when IFriendDataService is required somewhere; it creates instance of FriendDataService class then
-            builder.RegisterType<FriendDataService>().As<IFriendDataService>();
+            // Container knows when IFriendRepository is required somewhere; it creates instance of FriendDataService class then
+            builder.RegisterType<FriendRepository>().As<IFriendRepository>();
             //builder.RegisterType<LookupDataService>().As<IFriendLookupDataService>();
             builder.RegisterType<LookupDataService>().AsImplementedInterfaces();
             builder.RegisterType<NavigationViewModel>().As<INavigationViewModel>();
             builder.RegisterType<FriendDetailViewModel>().As<IFriendDetailViewModel>();
+            builder.RegisterType<MessageDialogService>().As<IMessageDialogService>();
             return builder.Build();
         }
+
+        #endregion
     }
 }

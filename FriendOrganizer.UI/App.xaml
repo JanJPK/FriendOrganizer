@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:FriendOrganizer.UI"
              Startup="Application_Startup"
-                DispatcherUnhandledException="App_OnDispatcherUnhandledException">
+             DispatcherUnhandledException="App_OnDispatcherUnhandledException">
 
     <Application.Resources>
         <Style TargetType="TextBox">
@@ -12,8 +12,9 @@
                 <Setter.Value>
                     <ControlTemplate>
                         <StackPanel>
-                            <AdornedElementPlaceholder x:Name="placeholder"/>
-                            <TextBlock FontSize="12" Foreground="DarkRed" Text="{Binding ElementName=placeholder, Path=AdornedElement.(Validation.Errors)[0].ErrorContent}"></TextBlock>
+                            <AdornedElementPlaceholder x:Name="placeholder" />
+                            <TextBlock FontSize="12" Foreground="DarkRed"
+                                       Text="{Binding ElementName=placeholder, Path=AdornedElement.(Validation.Errors)[0].ErrorContent}" />
                         </StackPanel>
                     </ControlTemplate>
                 </Setter.Value>
@@ -21,8 +22,9 @@
             <!-- Error message in mouse over tooltip -->
             <Style.Triggers>
                 <Trigger Property="Validation.HasError" Value="True">
-                    <Setter Property="Background" Value="DarkRed"></Setter>
-                    <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"></Setter>
+                    <Setter Property="Background" Value="DarkRed" />
+                    <Setter Property="ToolTip"
+                            Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}" />
                 </Trigger>
             </Style.Triggers>
         </Style>

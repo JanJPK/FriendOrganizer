@@ -5,7 +5,8 @@ using FriendOrganizer.Model;
 namespace FriendOrganizer.UI.Wrapper
 {
     /// <summary>
-    ///     Wrapper that allows us to implement interfaces (like INotifyDataErrorInfo) without "polluting" the actual model (Friend).
+    ///     Wrapper that allows us to implement interfaces (like INotifyDataErrorInfo) without "polluting" the actual model
+    ///     (Friend).
     /// </summary>
     public class FriendWrapper : ModelWrapper<Friend>
     {

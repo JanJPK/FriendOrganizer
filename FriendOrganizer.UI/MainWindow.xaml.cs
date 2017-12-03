@@ -10,7 +10,13 @@ namespace FriendOrganizer.UI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private MainViewModel viewModel;
+        #region Fields
+
+        private readonly MainViewModel viewModel;
+
+        #endregion
+
+        #region Constructors and Destructors
 
         // Taking parameter -> changes required in App.xaml.
         public MainWindow(MainViewModel viewModel)
@@ -22,9 +28,15 @@ namespace FriendOrganizer.UI
             Loaded += MainWindow_Loaded;
         }
 
+        #endregion
+
+        #region Methods
+
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             await viewModel.LoadAsync();
         }
+
+        #endregion
     }
 }

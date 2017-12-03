@@ -6,19 +6,29 @@ using System.Threading.Tasks;
 using FriendOrganizer.DataAccess;
 using FriendOrganizer.Model;
 
-namespace FriendOrganizer.UI.Data
+namespace FriendOrganizer.UI.Data.Lookups
 {
     /// <summary>
     ///     Loads the data from database.
     /// </summary>
     public class LookupDataService : IFriendLookupDataService
     {
+        #region Fields
+
         private readonly Func<FriendOrganizerDbContext> contextCreator;
+
+        #endregion
+
+        #region Constructors and Destructors
 
         public LookupDataService(Func<FriendOrganizerDbContext> contextCreator)
         {
             this.contextCreator = contextCreator;
         }
+
+        #endregion
+
+        #region Public Methods and Operators
 
         public async Task<IEnumerable<LookupItem>> GetFriendLookupAsync()
         {
@@ -34,5 +44,7 @@ namespace FriendOrganizer.UI.Data
                     .ToListAsync();
             }
         }
+
+        #endregion
     }
 }

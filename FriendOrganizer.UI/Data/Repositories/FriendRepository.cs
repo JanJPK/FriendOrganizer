@@ -1,27 +1,26 @@
-﻿using System;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using System.Threading.Tasks;
 using FriendOrganizer.DataAccess;
 using FriendOrganizer.Model;
 
-namespace FriendOrganizer.UI.Data
+namespace FriendOrganizer.UI.Data.Repositories
 {
     /// <summary>
     ///     Loads the data from database.
     /// </summary>
-    public class FriendDataService : IFriendDataService
+    public class FriendRepository : IFriendRepository
     {
         #region Fields
 
-        private readonly Func<FriendOrganizerDbContext> contextCreator;
+        private readonly FriendOrganizerDbContext context;
 
         #endregion
 
         #region Constructors and Destructors
 
-        public FriendDataService(Func<FriendOrganizerDbContext> contextCreator)
+        public FriendRepository(FriendOrganizerDbContext context)
         {
-            this.contextCreator = contextCreator;
+            this.context = context;
         }
 
         #endregion
@@ -43,20 +42,17 @@ namespace FriendOrganizer.UI.Data
 
         public async Task<Friend> GetByIdAsync(int id)
         {
-            using (var context = contextCreator())
-            {
-                return await context.Friends.AsNoTracking().SingleAsync(f => f.Id == id);
-            }
+            return await context.Friends.SingleAsync(f => f.Id == id);
         }
 
-        public async Task SaveAsync(Friend friend)
+        public bool HasChanges()
         {
-            using (var ctx = contextCreator())
-            {
-                ctx.Friends.Attach(friend);
-                ctx.Entry(friend).State = EntityState.Modified;
-                await ctx.SaveChangesAsync();
-            }
+            return context.ChangeTracker.HasChanges();
+        }
+
+        public async Task SaveAsync()
+        {
+            await context.SaveChangesAsync();
         }
 
         #endregion
