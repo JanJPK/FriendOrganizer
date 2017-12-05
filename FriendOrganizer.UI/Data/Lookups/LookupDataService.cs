@@ -11,7 +11,7 @@ namespace FriendOrganizer.UI.Data.Lookups
     /// <summary>
     ///     Loads the data from database.
     /// </summary>
-    public class LookupDataService : IFriendLookupDataService
+    public class LookupDataService : IFriendLookupDataService, IProgrammingLanguageLookupDataService
     {
         #region Fields
 
@@ -40,6 +40,21 @@ namespace FriendOrganizer.UI.Data.Lookups
                         {
                             Id = f.Id,
                             DisplayMember = f.FirstName + " " + f.LastName
+                        })
+                    .ToListAsync();
+            }
+        }
+
+        public async Task<IEnumerable<LookupItem>> GetProgrammingLanguageLookupAsync()
+        {
+            using (var ctx = contextCreator())
+            {
+                return await ctx.ProgrammingLanguages.AsNoTracking()
+                    .Select(f =>
+                        new LookupItem
+                        {
+                            Id = f.Id,
+                            DisplayMember = f.Name
                         })
                     .ToListAsync();
             }

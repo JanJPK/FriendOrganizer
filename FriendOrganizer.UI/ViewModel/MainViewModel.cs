@@ -35,7 +35,6 @@ namespace FriendOrganizer.UI.ViewModel
             NavigationViewModel = navigationViewModel;
         }
 
-
         #endregion
 
         #region Public Properties
@@ -67,6 +66,11 @@ namespace FriendOrganizer.UI.ViewModel
 
         #region Methods
 
+        private void AfterFriendDeleted(int id)
+        {
+            FriendDetailViewModel = null;
+        }
+
         private void OnCreateNewFriendExecute()
         {
             OnOpenFriendDetailView(null);
@@ -92,10 +96,5 @@ namespace FriendOrganizer.UI.ViewModel
         }
 
         #endregion
-        private void AfterFriendDeleted(int id)
-        {
-            FriendDetailViewModel = null;
-
-        }
     }
 }

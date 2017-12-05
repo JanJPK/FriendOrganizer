@@ -28,6 +28,7 @@ namespace FriendOrganizer.UI.Startup
             // Container knows when IFriendRepository is required somewhere; it creates instance of FriendDataService class then
             builder.RegisterType<FriendRepository>().As<IFriendRepository>();
             //builder.RegisterType<LookupDataService>().As<IFriendLookupDataService>();
+            // AsImplementedInterfaces -> with this we can have two interfaces for one file.
             builder.RegisterType<LookupDataService>().AsImplementedInterfaces();
             builder.RegisterType<NavigationViewModel>().As<INavigationViewModel>();
             builder.RegisterType<FriendDetailViewModel>().As<IFriendDetailViewModel>();

@@ -1,5 +1,4 @@
 ﻿using System.Data.Entity;
-using System.Data.Entity.ModelConfiguration;
 using System.Data.Entity.ModelConfiguration.Conventions;
 using FriendOrganizer.Model;
 
@@ -7,15 +6,25 @@ namespace FriendOrganizer.DataAccess
 {
     public class FriendOrganizerDbContext : DbContext
     {
-        public DbSet<Friend> Friends { get; set; }
+        #region Constructors and Destructors
 
         // Base takes connecton string.
         // App.config modification also necessary.
         //public FriendOrganizerDbContext() : base()
         public FriendOrganizerDbContext() : base("FriendOrganizerDb")
         {
-                
         }
+
+        #endregion
+
+        #region Public Properties
+
+        public DbSet<Friend> Friends { get; set; }
+        public DbSet<ProgrammingLanguage> ProgrammingLanguages { get; set; }
+
+        #endregion
+
+        #region Methods
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -30,6 +39,8 @@ namespace FriendOrganizer.DataAccess
             // Alternative approach (bundled with FriendConfiguration class below):
             //modelBuilder.Configurations.Add(new FriendConfiguration());
         }
+
+        #endregion
     }
 
     //public class FriendConfiguration : EntityTypeConfiguration<Friend>

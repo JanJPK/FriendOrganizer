@@ -7,13 +7,13 @@ namespace FriendOrganizer.UI.Data.Repositories
     {
         #region Public Methods and Operators
 
+        void Add(Friend friend);
+
         Task<Friend> GetByIdAsync(int id);
         bool HasChanges();
+        void Remove(Friend friendModel);
         Task SaveAsync();
 
         #endregion
-
-        void Add(Friend friend);
-        void Remove(Friend friendModel);
     }
 }

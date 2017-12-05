@@ -1,6 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using FriendOrganizer.Model;
+using FriendOrganizer.UI.Data.Lookups;
 using FriendOrganizer.UI.Data.Repositories;
 using FriendOrganizer.UI.Event;
 using FriendOrganizer.UI.View.Services;
@@ -20,23 +22,28 @@ namespace FriendOrganizer.UI.ViewModel
         private readonly IEventAggregator eventAggregator;
 
         private readonly IFriendRepository friendRepository;
+        private readonly IMessageDialogService messageDialog;
+        private readonly IProgrammingLanguageLookupDataService programmingLanguageLookupDataService;
 
         private FriendWrapper friend;
         private bool hasChanges;
-        private IMessageDialogService messageDialog;
 
         #endregion
 
         #region Constructors and Destructors
 
-        public FriendDetailViewModel(IFriendRepository friendRepository, 
-            IEventAggregator eventAggregator, IMessageDialogService messageDialog)
+        public FriendDetailViewModel(IFriendRepository friendRepository,
+            IEventAggregator eventAggregator, IMessageDialogService messageDialog,
+            IProgrammingLanguageLookupDataService programmingLanguageLookupDataService)
         {
             this.friendRepository = friendRepository;
             this.eventAggregator = eventAggregator;
             this.messageDialog = messageDialog;
+            this.programmingLanguageLookupDataService = programmingLanguageLookupDataService;
+
             SaveCommand = new DelegateCommand(OnSaveExecute, OnSaveCanExecute);
             DeleteCommand = new DelegateCommand(OnDeleteExecute);
+            ProgrammingLanguages = new ObservableCollection<LookupItem>();
         }
 
         #endregion
@@ -69,6 +76,8 @@ namespace FriendOrganizer.UI.ViewModel
             }
         }
 
+        public ObservableCollection<LookupItem> ProgrammingLanguages { get; }
+
         public ICommand SaveCommand { get; }
 
         #endregion
@@ -81,6 +90,24 @@ namespace FriendOrganizer.UI.ViewModel
                 ? await friendRepository.GetByIdAsync(id.Value)
                 : CreateNewFriend();
 
+            InitializeFriends(friend);
+
+            await LoadProgrammingLanguagesLookupAsync();
+        }
+
+        #endregion
+
+        #region Methods
+
+        private Friend CreateNewFriend()
+        {
+            var friend = new Friend();
+            friendRepository.Add(friend);
+            return friend;
+        }
+
+        private void InitializeFriends(Friend friend)
+        {
             Friend = new FriendWrapper(friend);
             Friend.PropertyChanged += (s, e) =>
             {
@@ -101,15 +128,15 @@ namespace FriendOrganizer.UI.ViewModel
             }
         }
 
-        #endregion
-
-        #region Methods
-
-        private Friend CreateNewFriend()
+        private async Task LoadProgrammingLanguagesLookupAsync()
         {
-            var friend = new Friend();
-            friendRepository.Add(friend);
-            return friend;
+            ProgrammingLanguages.Clear();
+            ProgrammingLanguages.Add(new NullLookupItem { DisplayMember = " - "});
+            var lookup = await programmingLanguageLookupDataService.GetProgrammingLanguageLookupAsync();
+            foreach (var lookupItem in lookup)
+            {
+                ProgrammingLanguages.Add(lookupItem);
+            }
         }
 
         private async void OnDeleteExecute()

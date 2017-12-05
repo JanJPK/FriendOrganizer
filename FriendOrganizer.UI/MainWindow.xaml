@@ -11,7 +11,7 @@
     <Window.Resources>
         <!-- Implicit data template. -->
         <DataTemplate DataType="{x:Type viewModel:FriendDetailViewModel}">
-            <view:FriendDetailView></view:FriendDetailView>
+            <view:FriendDetailView />
         </DataTemplate>
     </Window.Resources>
     <Grid>
@@ -29,10 +29,10 @@
                 <MenuItem Header="New Friend" Command="{Binding CreateNewFriendCommand}" />
             </MenuItem>
         </Menu>
-        <view:NavigationView Grid.Row="1" 
+        <view:NavigationView Grid.Row="1"
                              DataContext="{Binding NavigationViewModel}" />
-        <ContentControl Grid.Row="1" 
-                               Grid.Column="1" 
-                               Content="{Binding FriendDetailViewModel}" />
+        <ContentControl Grid.Row="1"
+                        Grid.Column="1"
+                        Content="{Binding FriendDetailViewModel}" />
     </Grid>
 </Window>

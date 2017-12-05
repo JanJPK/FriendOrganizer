@@ -27,6 +27,11 @@ namespace FriendOrganizer.UI.Data.Repositories
 
         #region Public Methods and Operators
 
+        public void Add(Friend friend)
+        {
+            context.Friends.Add(friend);
+        }
+
         //public async Task<List<Friend>> GetAllAsync()
         //{
         //    // yield return creates element only when need for it arises.
@@ -50,19 +55,14 @@ namespace FriendOrganizer.UI.Data.Repositories
             return context.ChangeTracker.HasChanges();
         }
 
-        public async Task SaveAsync()
-        {
-            await context.SaveChangesAsync();
-        }
-
-        public void Add(Friend friend)
-        {
-            context.Friends.Add(friend);
-        }
-
         public void Remove(Friend friendModel)
         {
             context.Friends.Remove(friendModel);
+        }
+
+        public async Task SaveAsync()
+        {
+            await context.SaveChangesAsync();
         }
 
         #endregion

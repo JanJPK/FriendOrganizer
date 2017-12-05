@@ -31,8 +31,6 @@ namespace FriendOrganizer.UI.ViewModel
             eventAggregator.GetEvent<AfterFriendDeletedEvent>().Subscribe(AfterFriendDeleted);
         }
 
-
-
         #endregion
 
         #region Public Properties
@@ -58,6 +56,15 @@ namespace FriendOrganizer.UI.ViewModel
 
         #region Methods
 
+        private void AfterFriendDeleted(int id)
+        {
+            var friend = Friends.SingleOrDefault(f => f.Id == id);
+            if (friend != null)
+            {
+                Friends.Remove(friend);
+            }
+        }
+
         private void AfterFriendSaved(AfterFriendSavedEventArgs obj)
         {
             // SingleOrDefault -> now we can have null ids (new friends), and this method returns null if id does not exist, unlike Single which throws an exception.
@@ -73,13 +80,5 @@ namespace FriendOrganizer.UI.ViewModel
         }
 
         #endregion
-        private void AfterFriendDeleted(int id)
-        {
-            var friend = Friends.SingleOrDefault(f => f.Id == id);
-            if (friend != null)
-            {
-                Friends.Remove(friend);
-            }
-        }
     }
 }
