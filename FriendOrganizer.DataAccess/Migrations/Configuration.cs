@@ -1,4 +1,5 @@
 using System.Data.Entity.Migrations;
+using System.Linq;
 using FriendOrganizer.Model;
 
 namespace FriendOrganizer.DataAccess.Migrations
@@ -32,6 +33,13 @@ namespace FriendOrganizer.DataAccess.Migrations
                 new ProgrammingLanguage {Name = "C++"},
                 new ProgrammingLanguage {Name = "F#"},
                 new ProgrammingLanguage {Name = "Visual Basic"}
+            );
+
+            context.SaveChanges(); // So Friends exist; required for phone numbers.
+
+            context.FriendPhoneNumbers.AddOrUpdate(
+                pl => pl.Number,
+                new FriendPhoneNumber{Number = "+48 12345678", FriendId = context.Friends.First().Id}
             );
         }
 

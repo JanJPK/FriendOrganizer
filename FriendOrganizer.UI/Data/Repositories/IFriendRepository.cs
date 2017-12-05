@@ -12,6 +12,8 @@ namespace FriendOrganizer.UI.Data.Repositories
         Task<Friend> GetByIdAsync(int id);
         bool HasChanges();
         void Remove(Friend friendModel);
+
+        void RemovePhoneNumber(FriendPhoneNumber model);
         Task SaveAsync();
 
         #endregion
