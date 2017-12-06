@@ -8,7 +8,7 @@ using Prism.Events;
 namespace FriendOrganizer.UI.ViewModel
 {
     /// <summary>
-    ///     Displays the list of friends. Publishes an event in event aggregator that FriendDetailVieModel is subscribed to.
+    ///     Displays the list of items. Publishes an event in event aggregator that FriendDetailVieModel is subscribed to.
     /// </summary>
     public class NavigationViewModel : ViewModelBase, INavigationViewModel
     {
@@ -27,8 +27,8 @@ namespace FriendOrganizer.UI.ViewModel
             this.friendLookupService = friendLookupService;
             this.eventAggregator = eventAggregator;
             Friends = new ObservableCollection<NavigationItemViewModel>();
-            eventAggregator.GetEvent<AfterFriendSavedEvent>().Subscribe(AfterFriendSaved);
-            eventAggregator.GetEvent<AfterFriendDeletedEvent>().Subscribe(AfterFriendDeleted);
+            eventAggregator.GetEvent<AfterDetailSavedEvent>().Subscribe(AfterDetailSaved);
+            eventAggregator.GetEvent<AfterDetailDeletedEvent>().Subscribe(AfterDetailDeleted);
         }
 
         #endregion
@@ -48,7 +48,8 @@ namespace FriendOrganizer.UI.ViewModel
             Friends.Clear();
             foreach (var item in lookup)
             {
-                Friends.Add(new NavigationItemViewModel(item.Id, item.DisplayMember, eventAggregator));
+                Friends.Add(new NavigationItemViewModel(item.Id, item.DisplayMember, eventAggregator,
+                    nameof(FriendDetailViewModel)));
             }
         }
 
@@ -56,26 +57,47 @@ namespace FriendOrganizer.UI.ViewModel
 
         #region Methods
 
-        private void AfterFriendDeleted(int id)
+        private void AfterDetailDeleted(AfterDetailDeletedEventArgs args)
         {
-            var friend = Friends.SingleOrDefault(f => f.Id == id);
-            if (friend != null)
+            //var friend = Friends.SingleOrDefault(f => f.Id == id);
+            //if (friend != null)
+            //{
+            //    Friends.Remove(friend);
+            //}
+
+            switch (args.ViewModelName)
             {
-                Friends.Remove(friend);
+                case nameof(FriendDetailViewModel):
+                {
+                    var friend = Friends.SingleOrDefault(f => f.Id == args.Id);
+                    if (friend != null)
+                    {
+                        Friends.Remove(friend);
+                    }
+                    break;
+                }
             }
         }
 
-        private void AfterFriendSaved(AfterFriendSavedEventArgs obj)
+        private void AfterDetailSaved(AfterDetailSavedEventArgs obj)
         {
             // SingleOrDefault -> now we can have null ids (new friends), and this method returns null if id does not exist, unlike Single which throws an exception.
-            var lookupItem = Friends.SingleOrDefault(l => l.Id == obj.Id);
-            if (lookupItem == null)
+            switch (obj.ViewModelname)
             {
-                Friends.Add(new NavigationItemViewModel(obj.Id, obj.DisplayMember, eventAggregator));
-            }
-            else
-            {
-                lookupItem.DisplayMember = obj.DisplayMember;
+                case nameof(FriendDetailViewModel):
+                {
+                    var lookupItem = Friends.SingleOrDefault(l => l.Id == obj.Id);
+                    if (lookupItem == null)
+                    {
+                        Friends.Add(new NavigationItemViewModel(obj.Id, obj.DisplayMember, eventAggregator,
+                            nameof(FriendDetailViewModel)));
+                    }
+                    else
+                    {
+                        lookupItem.DisplayMember = obj.DisplayMember;
+                    }
+                    break;
+                }
             }
         }
 
