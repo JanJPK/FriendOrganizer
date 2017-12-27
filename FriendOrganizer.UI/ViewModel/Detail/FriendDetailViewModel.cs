@@ -12,7 +12,7 @@ using FriendOrganizer.UI.Wrapper;
 using Prism.Commands;
 using Prism.Events;
 
-namespace FriendOrganizer.UI.ViewModel
+namespace FriendOrganizer.UI.ViewModel.Detail
 {
     /// <summary>
     ///     Displays details of selected friend.

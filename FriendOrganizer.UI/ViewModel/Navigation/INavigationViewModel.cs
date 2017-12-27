@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace FriendOrganizer.UI.ViewModel
+namespace FriendOrganizer.UI.ViewModel.Navigation
 {
     public interface INavigationViewModel
     {

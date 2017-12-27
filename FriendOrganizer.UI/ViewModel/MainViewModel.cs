@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Autofac.Features.Indexed;
 using FriendOrganizer.UI.Event;
 using FriendOrganizer.UI.View.Services;
+using FriendOrganizer.UI.ViewModel.Detail;
+using FriendOrganizer.UI.ViewModel.Navigation;
 using Prism.Commands;
 using Prism.Events;
 
@@ -13,24 +16,26 @@ namespace FriendOrganizer.UI.ViewModel
         #region Fields
 
         private readonly IEventAggregator eventAggregator;
-        private readonly Func<IFriendDetailViewModel> friendDetailViewModelCreator;
         private readonly IMessageDialogService messageDialogService;
         private IDetailViewModel detailViewModel;
+        private IIndex<string, IDetailViewModel> detailViewModelCreator;
 
         #endregion
 
         #region Constructors and Destructors
 
         public MainViewModel(INavigationViewModel navigationViewModel,
-            Func<IFriendDetailViewModel> friendDetailViewModelCreator,
+            IIndex<string, IDetailViewModel> detailViewModelCreator,
             IEventAggregator eventAggregator,
             IMessageDialogService messageDialogService)
         {
             this.messageDialogService = messageDialogService;
-            this.friendDetailViewModelCreator = friendDetailViewModelCreator;
+            this.detailViewModelCreator = detailViewModelCreator;
+
             this.eventAggregator = eventAggregator;
             this.eventAggregator.GetEvent<OpenDetailViewEvent>().Subscribe(OnOpenDetailView);
             this.eventAggregator.GetEvent<AfterDetailDeletedEvent>().Subscribe(AfterDetailDeleted);
+
             CreateNewDetailCommand = new DelegateCommand<Type>(OnCreateNewDetailExecute);
             NavigationViewModel = navigationViewModel;
         }
@@ -75,7 +80,7 @@ namespace FriendOrganizer.UI.ViewModel
         {
             //OnOpenDetailView(new OpenDetailViewEventArgs { ViewModelName = nameof(FriendDetailViewModel)});
             // More versatile approach:
-            OnOpenDetailView(new OpenDetailViewEventArgs { ViewModelName = viewModelType.Name });
+            OnOpenDetailView(new OpenDetailViewEventArgs {ViewModelName = viewModelType.Name});
         }
 
         private async void OnOpenDetailView(OpenDetailViewEventArgs args)
@@ -94,15 +99,7 @@ namespace FriendOrganizer.UI.ViewModel
                 }
             }
 
-            switch (args.ViewModelName)
-            {
-                case nameof(FriendDetailViewModel):
-                {
-                    DetailViewModel = friendDetailViewModelCreator();
-                    break;
-                }
-            }
-
+            DetailViewModel = detailViewModelCreator[args.ViewModelName];
             await DetailViewModel.LoadAsync(args.Id);
         }
 

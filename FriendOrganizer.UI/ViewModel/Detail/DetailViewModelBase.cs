@@ -4,7 +4,7 @@ using FriendOrganizer.UI.Event;
 using Prism.Commands;
 using Prism.Events;
 
-namespace FriendOrganizer.UI.ViewModel
+namespace FriendOrganizer.UI.ViewModel.Detail
 {
     public abstract class DetailViewModelBase : ViewModelBase, IDetailViewModel
     {

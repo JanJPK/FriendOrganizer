@@ -11,6 +11,7 @@ namespace FriendOrganizer.Model
         public Friend()
         {
             PhoneNumbers = new Collection<FriendPhoneNumber>();
+            Meetings = new Collection<Meeting>();
         }
 
         #endregion
@@ -36,6 +37,7 @@ namespace FriendOrganizer.Model
 
         public ICollection<FriendPhoneNumber> PhoneNumbers { get; set; }
 
+        public ICollection<Meeting> Meetings { get; set; }
         #endregion
     }
 }

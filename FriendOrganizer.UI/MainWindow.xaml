@@ -6,15 +6,20 @@
         xmlns:local="clr-namespace:FriendOrganizer.UI"
         xmlns:view="clr-namespace:FriendOrganizer.UI.View"
         xmlns:viewModel="clr-namespace:FriendOrganizer.UI.ViewModel"
+        xmlns:detail="clr-namespace:FriendOrganizer.UI.ViewModel.Detail"
         mc:Ignorable="d"
         Title="FriendOrganizer" Height="700" Width="1000" FontSize="20"
         WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <!-- Implicit data template. -->
-        <DataTemplate DataType="{x:Type viewModel:FriendDetailViewModel}">
+        <DataTemplate DataType="{x:Type detail:FriendDetailViewModel}">
             <view:FriendDetailView />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type detail:MeetingDetailViewModel}">
+            <view:MeetingDetailView />
+        </DataTemplate>
     </Window.Resources>
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -28,10 +33,12 @@
         <Menu Grid.ColumnSpan="2" FontSize="20">
             <MenuItem Header="Create">
                 <MenuItem Header="New Friend" Command="{Binding CreateNewDetailCommand}"
-                          CommandParameter="{x:Type viewModel:FriendDetailViewModel}"/>
+                          CommandParameter="{x:Type detail:FriendDetailViewModel}"/>
+                <MenuItem Header="New Meeting" Command="{Binding CreateNewDetailCommand}"
+                          CommandParameter="{x:Type detail:MeetingDetailViewModel}"/>
             </MenuItem>
         </Menu>
-        <view:NavigationView Grid.Row="1"
+        <view:NavigationView Grid.Row="1" Grid.Column="0"
                              DataContext="{Binding NavigationViewModel}" />
         <ContentControl Grid.Row="1"
                         Grid.Column="1"

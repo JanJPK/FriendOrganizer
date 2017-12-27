@@ -4,6 +4,8 @@ using FriendOrganizer.UI.Data.Lookups;
 using FriendOrganizer.UI.Data.Repositories;
 using FriendOrganizer.UI.View.Services;
 using FriendOrganizer.UI.ViewModel;
+using FriendOrganizer.UI.ViewModel.Detail;
+using FriendOrganizer.UI.ViewModel.Navigation;
 using Prism.Events;
 
 namespace FriendOrganizer.UI.Startup
@@ -27,11 +29,13 @@ namespace FriendOrganizer.UI.Startup
 
             // Container knows when IFriendRepository is required somewhere; it creates instance of FriendDataService class then
             builder.RegisterType<FriendRepository>().As<IFriendRepository>();
+            builder.RegisterType<MeetingRepository>().As<IMeetingRepository>();
             //builder.RegisterType<LookupDataService>().As<IFriendLookupDataService>();
             // AsImplementedInterfaces -> with this we can have two interfaces for one file.
             builder.RegisterType<LookupDataService>().AsImplementedInterfaces();
             builder.RegisterType<NavigationViewModel>().As<INavigationViewModel>();
-            builder.RegisterType<FriendDetailViewModel>().As<IFriendDetailViewModel>();
+            builder.RegisterType<FriendDetailViewModel>().Keyed<IDetailViewModel>(nameof(FriendDetailViewModel));
+            builder.RegisterType<MeetingDetailViewModel>().Keyed<IDetailViewModel>(nameof(MeetingDetailViewModel));
             builder.RegisterType<MessageDialogService>().As<IMessageDialogService>();
             return builder.Build();
         }
