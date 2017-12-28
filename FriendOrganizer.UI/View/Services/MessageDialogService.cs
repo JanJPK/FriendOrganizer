@@ -6,6 +6,11 @@ namespace FriendOrganizer.UI.View.Services
     {
         #region Public Methods and Operators
 
+        public void ShowInfoDialog(string text)
+        {
+            MessageBox.Show(text);
+        }
+
         public MessageDialogResult ShowOkCancelDialog(string text, string title)
         {
             var result = MessageBox.Show(text, title, MessageBoxButton.OKCancel);

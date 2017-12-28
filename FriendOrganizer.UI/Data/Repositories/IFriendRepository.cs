@@ -1,4 +1,5 @@
-﻿using FriendOrganizer.Model;
+﻿using System.Threading.Tasks;
+using FriendOrganizer.Model;
 
 namespace FriendOrganizer.UI.Data.Repositories
 {
@@ -8,6 +9,7 @@ namespace FriendOrganizer.UI.Data.Repositories
         #region Public Methods and Operators
 
         void RemovePhoneNumber(FriendPhoneNumber model);
+        Task<bool> HasMeetingsAsync(int friendId);
 
         #endregion
     }
