@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Autofac.Features.Indexed;
@@ -15,10 +17,13 @@ namespace FriendOrganizer.UI.ViewModel
     {
         #region Fields
 
+        private readonly IIndex<string, IDetailViewModel> detailViewModelCreator;
+
         private readonly IEventAggregator eventAggregator;
         private readonly IMessageDialogService messageDialogService;
-        private IDetailViewModel detailViewModel;
-        private IIndex<string, IDetailViewModel> detailViewModelCreator;
+
+        private int nextNewItemId;
+        private IDetailViewModel selectedDetailViewModel;
 
         #endregion
 
@@ -32,11 +37,15 @@ namespace FriendOrganizer.UI.ViewModel
             this.messageDialogService = messageDialogService;
             this.detailViewModelCreator = detailViewModelCreator;
 
+            DetailViewModels = new ObservableCollection<IDetailViewModel>();
+
             this.eventAggregator = eventAggregator;
             this.eventAggregator.GetEvent<OpenDetailViewEvent>().Subscribe(OnOpenDetailView);
             this.eventAggregator.GetEvent<AfterDetailDeletedEvent>().Subscribe(AfterDetailDeleted);
+            this.eventAggregator.GetEvent<AfterDetailClosedEvent>().Subscribe(AfterDetailClosed);
 
             CreateNewDetailCommand = new DelegateCommand<Type>(OnCreateNewDetailExecute);
+
             NavigationViewModel = navigationViewModel;
         }
 
@@ -46,17 +55,19 @@ namespace FriendOrganizer.UI.ViewModel
 
         public ICommand CreateNewDetailCommand { get; }
 
-        public IDetailViewModel DetailViewModel
+        public ObservableCollection<IDetailViewModel> DetailViewModels { get; }
+
+        public INavigationViewModel NavigationViewModel { get; }
+
+        public IDetailViewModel SelectedDetailViewModel
         {
-            get => detailViewModel;
-            private set
+            get => selectedDetailViewModel;
+            set
             {
-                detailViewModel = value;
+                selectedDetailViewModel = value;
                 OnPropertyChanged();
             }
         }
-
-        public INavigationViewModel NavigationViewModel { get; }
 
         #endregion
 
@@ -71,36 +82,52 @@ namespace FriendOrganizer.UI.ViewModel
 
         #region Methods
 
+        private void AfterDetailClosed(AfterDetailClosedEventArgs args)
+        {
+            RemoveDetailViewModel(args.Id, args.ViewModelName);
+        }
+
         private void AfterDetailDeleted(AfterDetailDeletedEventArgs args)
         {
-            DetailViewModel = null;
+            RemoveDetailViewModel(args.Id, args.ViewModelName);
         }
 
         private void OnCreateNewDetailExecute(Type viewModelType)
         {
             //OnOpenDetailView(new OpenDetailViewEventArgs { ViewModelName = nameof(FriendDetailViewModel)});
             // More versatile approach:
-            OnOpenDetailView(new OpenDetailViewEventArgs {ViewModelName = viewModelType.Name});
+            OnOpenDetailView(new OpenDetailViewEventArgs
+            {
+                Id = nextNewItemId--,
+                ViewModelName = viewModelType.Name
+            });
         }
 
         private async void OnOpenDetailView(OpenDetailViewEventArgs args)
         {
-            if (DetailViewModel != null && DetailViewModel.HasChanges)
+            var detailViewModel = DetailViewModels
+                .SingleOrDefault(vm => vm.Id == args.Id
+                                       && vm.GetType().Name == args.ViewModelName);
+
+            if (detailViewModel == null)
             {
-                // MessageBox here is a bad practice - it prevents unit testing.
-                //var result = MessageBox.Show("You've made changes. Navigate away and lose them?", "Question",
-                //    MessageBoxButton.OKCancel);
-                var result =
-                    messageDialogService.ShowOkCancelDialog("You've made changes. Navigate away and lose them?",
-                        "Question");
-                if (result == MessageDialogResult.Cancel)
-                {
-                    return;
-                }
+                detailViewModel = detailViewModelCreator[args.ViewModelName];
+                await detailViewModel.LoadAsync(args.Id);
+                DetailViewModels.Add(detailViewModel);
             }
 
-            DetailViewModel = detailViewModelCreator[args.ViewModelName];
-            await DetailViewModel.LoadAsync(args.Id);
+            SelectedDetailViewModel = detailViewModel;
+        }
+
+        private void RemoveDetailViewModel(int id, string viewModelName)
+        {
+            var detailViewModel = DetailViewModels
+                .SingleOrDefault(vm => vm.Id == id
+                                       && vm.GetType().Name == viewModelName);
+            if (detailViewModel != null)
+            {
+                DetailViewModels.Remove(detailViewModel);
+            }
         }
 
         #endregion

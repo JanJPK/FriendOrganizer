@@ -8,11 +8,13 @@ namespace FriendOrganizer.UI.ViewModel.Detail
 
         bool HasChanges { get; }
 
+        int Id { get;}
+
         #endregion
 
         #region Public Methods and Operators
 
-        Task LoadAsync(int? id);
+        Task LoadAsync(int id);
 
         #endregion
     }

@@ -22,7 +22,6 @@ namespace FriendOrganizer.UI.ViewModel.Detail
         #region Fields
 
         private readonly IFriendRepository friendRepository;
-        private readonly IMessageDialogService messageDialog;
         private readonly IProgrammingLanguageLookupDataService programmingLanguageLookupDataService;
 
         private FriendWrapper friend;
@@ -35,10 +34,9 @@ namespace FriendOrganizer.UI.ViewModel.Detail
         public FriendDetailViewModel(IFriendRepository friendRepository,
             IEventAggregator eventAggregator, IMessageDialogService messageDialog,
             IProgrammingLanguageLookupDataService programmingLanguageLookupDataService)
-            : base(eventAggregator)
+            : base(eventAggregator, messageDialog)
         {
             this.friendRepository = friendRepository;
-            this.messageDialog = messageDialog;
             this.programmingLanguageLookupDataService = programmingLanguageLookupDataService;
 
             AddPhoneNumberCommand = new DelegateCommand(OnAddPhoneNumberExecute);
@@ -84,11 +82,13 @@ namespace FriendOrganizer.UI.ViewModel.Detail
 
         #region Public Methods and Operators
 
-        public override async Task LoadAsync(int? id)
+        public override async Task LoadAsync(int id)
         {
-            var friend = id.HasValue
-                ? await friendRepository.GetByIdAsync(id.Value)
+            var friend = id > 0
+                ? await friendRepository.GetByIdAsync(id)
                 : CreateNewFriend();
+
+            Id = id;
 
             InitializeFriend(friend);
             InitializeFriendPhoneNumbers(friend.PhoneNumbers);
@@ -105,11 +105,12 @@ namespace FriendOrganizer.UI.ViewModel.Detail
             // Checking if friend is part of a meeting.
             if (await friendRepository.HasMeetingsAsync(Friend.Id))
             {
-                messageDialog.ShowInfoDialog($"{Friend.FirstName} {Friend.LastName} attends a meeting and cannot be deleted.");
+                MessageDialogService.ShowInfoDialog(
+                    $"{Friend.FirstName} {Friend.LastName} attends a meeting and cannot be deleted.");
                 return;
             }
 
-            var result = messageDialog.ShowOkCancelDialog(
+            var result = MessageDialogService.ShowOkCancelDialog(
                 $"Do you really want to delete the friend {Friend.FirstName} {Friend.LastName}?",
                 "Question");
             if (result == MessageDialogResult.OK)
@@ -132,6 +133,7 @@ namespace FriendOrganizer.UI.ViewModel.Detail
         {
             await friendRepository.SaveAsync();
             HasChanges = friendRepository.HasChanges();
+            Id = Friend.Id;
             RaiseDetailSavedEvent(Friend.Id, $"{Friend.FirstName} {Friend.LastName}");
         }
 
@@ -163,9 +165,16 @@ namespace FriendOrganizer.UI.ViewModel.Detail
                 {
                     HasChanges = friendRepository.HasChanges();
                 }
+
                 if (e.PropertyName == nameof(Friend.HasErrors))
                 {
                     ((DelegateCommand) SaveCommand).RaiseCanExecuteChanged();
+                }
+
+                if (e.PropertyName == nameof(Friend.FirstName)
+                    || e.PropertyName == nameof(Friend.LastName))
+                {
+                    SetTitle();
                 }
             };
             ((DelegateCommand) SaveCommand).RaiseCanExecuteChanged();
@@ -174,6 +183,7 @@ namespace FriendOrganizer.UI.ViewModel.Detail
                 // Triggers the validation.
                 Friend.FirstName = "";
             }
+            SetTitle();
         }
 
         private void InitializeFriendPhoneNumbers(ICollection<FriendPhoneNumber> friendPhoneNumbers)
@@ -227,6 +237,11 @@ namespace FriendOrganizer.UI.ViewModel.Detail
             SelectedPhoneNumber = null;
             HasChanges = friendRepository.HasChanges();
             ((DelegateCommand) SaveCommand).RaiseCanExecuteChanged();
+        }
+
+        private void SetTitle()
+        {
+            Title = $"{Friend.FirstName} {Friend.LastName}";
         }
 
         #endregion

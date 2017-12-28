@@ -105,7 +105,7 @@ namespace FriendOrganizer.UI.ViewModel.Navigation
         private void AfterDetailSaved(AfterDetailSavedEventArgs args)
         {
             // SingleOrDefault -> now we can have null ids (new friends), and this method returns null if id does not exist, unlike Single which throws an exception.
-            switch (args.ViewModelname)
+            switch (args.ViewModelName)
             {
                 case nameof(FriendDetailViewModel):
                 {
@@ -128,7 +128,7 @@ namespace FriendOrganizer.UI.ViewModel.Navigation
             if (lookupItem == null)
             {
                 items.Add(new NavigationItemViewModel(args.Id, args.DisplayMember, eventAggregator,
-                    args.ViewModelname));
+                    args.ViewModelName));
             }
             else
             {
