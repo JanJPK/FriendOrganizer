@@ -45,7 +45,7 @@ namespace FriendOrganizer.UI.ViewModel
             this.eventAggregator.GetEvent<AfterDetailClosedEvent>().Subscribe(AfterDetailClosed);
 
             CreateNewDetailCommand = new DelegateCommand<Type>(OnCreateNewDetailExecute);
-
+            OpenSingleDetailViewCommand = new DelegateCommand<Type>(OnOpenSingleDetailViewExecute);
             NavigationViewModel = navigationViewModel;
         }
 
@@ -58,6 +58,8 @@ namespace FriendOrganizer.UI.ViewModel
         public ObservableCollection<IDetailViewModel> DetailViewModels { get; }
 
         public INavigationViewModel NavigationViewModel { get; }
+
+        public ICommand OpenSingleDetailViewCommand { get; }
 
         public IDetailViewModel SelectedDetailViewModel
         {
@@ -117,6 +119,15 @@ namespace FriendOrganizer.UI.ViewModel
             }
 
             SelectedDetailViewModel = detailViewModel;
+        }
+
+        private void OnOpenSingleDetailViewExecute(Type viewModelType)
+        {
+            OnOpenDetailView(new OpenDetailViewEventArgs
+            {
+                Id = -1,
+                ViewModelName = viewModelType.Name
+            });
         }
 
         private void RemoveDetailViewModel(int id, string viewModelName)

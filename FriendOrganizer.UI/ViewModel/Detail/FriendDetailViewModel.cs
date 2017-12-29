@@ -7,6 +7,7 @@ using System.Windows.Input;
 using FriendOrganizer.Model;
 using FriendOrganizer.UI.Data.Lookups;
 using FriendOrganizer.UI.Data.Repositories;
+using FriendOrganizer.UI.Event;
 using FriendOrganizer.UI.View.Services;
 using FriendOrganizer.UI.Wrapper;
 using Prism.Commands;
@@ -38,6 +39,8 @@ namespace FriendOrganizer.UI.ViewModel.Detail
         {
             this.friendRepository = friendRepository;
             this.programmingLanguageLookupDataService = programmingLanguageLookupDataService;
+
+            eventAggregator.GetEvent<AfterCollectionSavedEvent>().Subscribe(AfterCollectionSaved);
 
             AddPhoneNumberCommand = new DelegateCommand(OnAddPhoneNumberExecute);
             RemovePhoneNumberCommand = new DelegateCommand(OnRemovePhoneNumberExecute, OnRemovePhoneNumberCanExecute);
@@ -135,6 +138,14 @@ namespace FriendOrganizer.UI.ViewModel.Detail
             HasChanges = friendRepository.HasChanges();
             Id = Friend.Id;
             RaiseDetailSavedEvent(Friend.Id, $"{Friend.FirstName} {Friend.LastName}");
+        }
+
+        private async void AfterCollectionSaved(AfterCollectionSavedEventArgs args)
+        {
+            if (args.ViewModelName == nameof(ProgrammingLanguageDetailViewModel))
+            {
+                await LoadProgrammingLanguagesLookupAsync();
+            }
         }
 
         private Friend CreateNewFriend()

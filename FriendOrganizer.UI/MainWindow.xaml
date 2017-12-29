@@ -18,6 +18,9 @@
         <DataTemplate DataType="{x:Type detail:MeetingDetailViewModel}">
             <view:MeetingDetailView />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type detail:ProgrammingLanguageDetailViewModel}">
+            <view:ProgrammingLanguageDetailView />
+        </DataTemplate>
     </Window.Resources>
     
     <Grid>
@@ -30,12 +33,17 @@
             <!-- Width="*" - use leftover space; also the default. -->
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
+        
         <Menu Grid.ColumnSpan="2" FontSize="20">
             <MenuItem Header="Create">
                 <MenuItem Header="New Friend" Command="{Binding CreateNewDetailCommand}"
                           CommandParameter="{x:Type detail:FriendDetailViewModel}"/>
                 <MenuItem Header="New Meeting" Command="{Binding CreateNewDetailCommand}"
                           CommandParameter="{x:Type detail:MeetingDetailViewModel}"/>
+            </MenuItem>
+            <MenuItem Header="Edit">
+                <MenuItem Header="Programming Languages" Command="{Binding OpenSingleDetailViewCommand}"
+                          CommandParameter="{x:Type detail:ProgrammingLanguageDetailViewModel}"/>
             </MenuItem>
         </Menu>
         <view:NavigationView Grid.Row="1" Grid.Column="0"

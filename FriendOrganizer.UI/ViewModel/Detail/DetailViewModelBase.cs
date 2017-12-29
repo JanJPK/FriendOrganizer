@@ -123,5 +123,14 @@ namespace FriendOrganizer.UI.ViewModel.Detail
         }
 
         #endregion
+
+        protected virtual void RaiseCollectionSavedEvent()
+        {
+            EventAggregator.GetEvent<AfterCollectionSavedEvent>()
+                .Publish(new AfterCollectionSavedEventArgs
+                {
+                    ViewModelName = this.GetType().Name
+                });
+        }
     }
 }

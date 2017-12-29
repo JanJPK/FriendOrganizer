@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace FriendOrganizer.UI.Data.Repositories
 {
@@ -7,6 +8,7 @@ namespace FriendOrganizer.UI.Data.Repositories
         #region Public Methods and Operators
 
         void Add(T model);
+        Task<IEnumerable<T>> GetAllAsync();
         Task<T> GetByIdAsync(int id);
         bool HasChanges();
         void Remove(T model);
