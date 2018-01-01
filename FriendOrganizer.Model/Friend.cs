@@ -38,6 +38,9 @@ namespace FriendOrganizer.Model
         public ICollection<FriendPhoneNumber> PhoneNumbers { get; set; }
 
         public ICollection<Meeting> Meetings { get; set; }
+
+        [Timestamp]
+        public byte[] RowVersion { get; set; }
         #endregion
     }
 }
