@@ -121,7 +121,7 @@ namespace FriendOrganizer.UI.ViewModel
                 }
                 catch
                 {
-                    messageDialogService.ShowInfoDialog("Could not load the entity.");
+                    messageDialogService.ShowInfoDialogAsync("Could not load the entity.");
                     await NavigationViewModel.LoadAsync();
                     return;
                 }

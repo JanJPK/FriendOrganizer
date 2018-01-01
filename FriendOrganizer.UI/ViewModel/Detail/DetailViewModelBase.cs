@@ -81,11 +81,11 @@ namespace FriendOrganizer.UI.ViewModel.Detail
 
         #region Methods
 
-        protected virtual void OnCloseDetailViewExecute()
+        protected virtual async void OnCloseDetailViewExecute()
         {
             if (HasChanges)
             {
-                var result = MessageDialogService.ShowOkCancelDialog(
+                var result = await MessageDialogService.ShowOkCancelDialogAsync(
                     "You've made changes. Close this item?", "Question");
                 if (result == MessageDialogResult.Cancel)
                 {
@@ -148,12 +148,12 @@ namespace FriendOrganizer.UI.ViewModel.Detail
                 var databaseValues = ex.Entries.Single().GetDatabaseValues();
                 if (databaseValues == null)
                 {
-                    MessageDialogService.ShowInfoDialog("The entity has been deleted by another user.");
+                    MessageDialogService.ShowInfoDialogAsync("The entity has been deleted by another user.");
                     RaiseDetailDeletedEvent(Id);
                     return;
                 }
 
-                var result = MessageDialogService.ShowOkCancelDialog(
+                var result = await MessageDialogService.ShowOkCancelDialogAsync(
                     "The entity has been changed in the meantime by someone else. "
                     + "Click OK to save changes; click Cancel to reload entity from the database.",
                     "Question");

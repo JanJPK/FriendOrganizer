@@ -58,7 +58,7 @@ namespace FriendOrganizer.UI.ViewModel.Detail
                 await programmingLanguageRepository.IsReferencedByFriendAsync(SelectedProgrammingLanguage.Id);
             if (isReferenced)
             {
-                MessageDialogService.ShowInfoDialog($"The language {SelectedProgrammingLanguage.Name} cannot be deleted as it is referenced by one or more friends.");
+                MessageDialogService.ShowInfoDialogAsync($"The language {SelectedProgrammingLanguage.Name} cannot be deleted as it is referenced by one or more friends.");
                 return;
             }
 
@@ -133,7 +133,7 @@ namespace FriendOrganizer.UI.ViewModel.Detail
                 {
                     ex = ex.InnerException;
                 }
-                MessageDialogService.ShowInfoDialog("Error while saving the entities, the data will be reloaded. Details: " + ex.Message);
+                MessageDialogService.ShowInfoDialogAsync("Error while saving the entities, the data will be reloaded. Details: " + ex.Message);
                 await LoadAsync(Id);
             }
 
